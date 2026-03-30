@@ -65,14 +65,8 @@ const piOnlineColor = computed(() => {
       <!-- ── Sidebar ────────────────────────────────────────────────────────── -->
       <UDashboardSidebar>
         <template #header>
-          <div class="flex items-center gap-3 px-1 py-1">
-            <div class="flex items-center justify-center w-9 h-9 rounded-lg quantum-brand-icon">
-              <UIcon name="heroicons:cpu-chip" class="text-xl text-cyan-400" />
-            </div>
-            <div>
-              <p class="font-bold text-sm leading-none tracking-wide">Q-IoT Control</p>
-              <p class="text-xs text-cyan-500/70 mt-0.5">Quantum Computing · IoT</p>
-            </div>
+          <div class="px-2 py-3">
+            <img src="/logo.png" alt="QuantumDrive" class="w-full object-contain" />
           </div>
         </template>
 
@@ -86,7 +80,7 @@ const piOnlineColor = computed(() => {
             <!-- PC row -->
             <div class="flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors quantum-device-row">
               <UChip :color="pcOnlineColor" inset size="sm" class="shrink-0">
-                <UIcon name="heroicons:computer-desktop" class="text-xl text-gray-300" />
+                <UIcon name="heroicons:computer-desktop" class="text-xl text-(--steel-200)" />
               </UChip>
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium">Home PC</p>
@@ -112,7 +106,7 @@ const piOnlineColor = computed(() => {
             <!-- Pi row -->
             <div class="flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors quantum-device-row">
               <UChip :color="piOnlineColor" inset size="sm" class="shrink-0">
-                <UIcon name="heroicons:cpu-chip" class="text-xl text-gray-300" />
+                <UIcon name="heroicons:cpu-chip" class="text-xl text-(--steel-200)" />
               </UChip>
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium">Raspberry Pi</p>
@@ -185,7 +179,7 @@ const piOnlineColor = computed(() => {
         </div>
 
         <template #footer>
-          <div class="flex items-center gap-2 px-3 py-2 text-xs text-cyan-500/50 quantum-footer">
+          <div class="flex items-center gap-2 px-3 py-2 text-xs text-(--steel-500) quantum-footer">
             <UIcon name="heroicons:signal" class="text-sm shrink-0" />
             <span>Quantum state sync every 8s · QKD secured</span>
           </div>
@@ -197,7 +191,7 @@ const piOnlineColor = computed(() => {
         <template #header>
           <UDashboardNavbar title="Quantum Node Monitor" icon="heroicons:cpu-chip">
             <template #right>
-              <span class="text-xs text-cyan-500/60 hidden sm:block tracking-wide">Q-IoT · March 2026</span>
+              <span class="text-xs text-(--steel-400) hidden sm:block tracking-wide">Q-IoT · March 2026</span>
             </template>
           </UDashboardNavbar>
         </template>
