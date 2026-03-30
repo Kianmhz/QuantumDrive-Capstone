@@ -170,6 +170,27 @@ const piOnlineColor = computed(() => {
             </UButton>
           </div>
 
+          <USeparator />
+
+          <!-- Observability section -->
+          <div class="space-y-2">
+            <p class="text-xs font-semibold uppercase px-2 mb-2 quantum-section-label">Observability</p>
+            <UButton
+              block
+              color="neutral"
+              variant="outline"
+              icon="heroicons:chart-bar"
+              size="sm"
+              trailing-icon="heroicons:arrow-top-right-on-square"
+              as="a"
+              href="https://email4burnerapps21.grafana.net/public-dashboards/1f09e0f8321046a5b58118d3d4959150?from=2026-03-24T20:32:43.978Z&to=2026-03-24T20:44:19.108Z&timezone=browser"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Grafana Dashboard
+            </UButton>
+          </div>
+
         </div>
 
         <!-- Quantum Orb fills remaining sidebar space -->
