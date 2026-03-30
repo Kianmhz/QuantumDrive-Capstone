@@ -35,8 +35,8 @@ export function useDevices() {
   const toast = useToast()
   const logs = useDeviceLogs()
 
-  const pc = useState('device-pc', () => makeDevice('pc', 'Home PC', 'heroicons:computer-desktop'))
-  const pi = useState('device-pi', () => makeDevice('pi', 'Raspberry Pi', 'heroicons:cpu-chip'))
+  const pc = useState('device-pc', () => makeDevice('pc', 'QFlow', 'heroicons:computer-desktop'))
+  const pi = useState('device-pi', () => makeDevice('pi', 'QFocus', 'heroicons:cpu-chip'))
 
   // ── fetch status ────────────────────────────────────────────────────────────
 

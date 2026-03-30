@@ -83,7 +83,7 @@ const piOnlineColor = computed(() => {
                 <UIcon name="heroicons:computer-desktop" class="text-xl text-(--steel-200)" />
               </UChip>
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium">Home PC</p>
+                <p class="text-sm font-medium">QFlow</p>
                 <div class="flex items-center gap-1 mt-0.5">
                   <UBadge
                     :color="pc.online ? 'success' : pc.online === false ? 'error' : 'neutral'"
@@ -109,7 +109,7 @@ const piOnlineColor = computed(() => {
                 <UIcon name="heroicons:cpu-chip" class="text-xl text-(--steel-200)" />
               </UChip>
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium">Raspberry Pi</p>
+                <p class="text-sm font-medium">QFocus</p>
                 <div class="flex items-center gap-1 mt-0.5">
                   <UBadge
                     :color="pi.online ? 'success' : pi.online === false ? 'error' : 'neutral'"
