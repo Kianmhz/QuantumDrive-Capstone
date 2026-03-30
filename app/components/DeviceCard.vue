@@ -116,7 +116,7 @@ onUnmounted(() => {
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 min-w-0">
           <UChip :color="chipColor" inset size="sm">
-            <UIcon :name="device.icon" class="text-2xl text-cyan-200" />
+            <UIcon :name="device.icon" class="text-2xl text-[#f4b88a]" />
           </UChip>
           <span class="font-semibold text-lg truncate">{{ device.label }}</span>
         </div>
@@ -135,12 +135,12 @@ onUnmounted(() => {
     <div class="flex flex-col gap-4 flex-1">
 
       <!-- Video Preview -->
-      <div class="rounded-lg overflow-hidden bg-gray-950 border quantum-video aspect-video flex items-center justify-center relative">
+      <div class="rounded-lg overflow-hidden bg-stone-950 border quantum-video aspect-video flex items-center justify-center relative">
 
         <!-- Skeleton while status is unknown -->
         <template v-if="isLoading">
           <USkeleton class="absolute inset-0 w-full h-full rounded-lg" />
-          <div class="relative z-10 flex flex-col items-center gap-2 text-cyan-500/60">
+          <div class="relative z-10 flex flex-col items-center gap-2 text-[#b4694f]/60">
             <UIcon name="heroicons:cpu-chip" class="text-3xl animate-pulse" />
             <span class="text-xs tracking-widest uppercase">Initializing quantum state…</span>
           </div>
@@ -173,7 +173,7 @@ onUnmounted(() => {
 
         <!-- Offline placeholder -->
         <template v-else>
-          <div class="flex flex-col items-center gap-2 text-cyan-900/80">
+          <div class="flex flex-col items-center gap-2 text-[#7a2d16]/80">
             <UIcon name="heroicons:signal-slash" class="text-4xl" />
             <span class="text-sm tracking-wide">No quantum channel</span>
           </div>
@@ -242,13 +242,13 @@ onUnmounted(() => {
     <div
       v-if="isExpanded"
       class="fixed inset-0 z-100 bg-black/95 p-4 sm:p-6 flex flex-col"
-      style="background-image: radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.04) 0%, transparent 70%);"
+      style="background-image: radial-gradient(ellipse at 50% 50%, rgba(180, 105, 79, 0.04) 0%, transparent 70%);"
       @click.self="closeExpanded"
     >
       <div class="mx-auto w-full max-w-6xl flex items-center justify-between gap-3 text-gray-100">
         <div class="flex items-center gap-2 min-w-0">
           <UChip :color="chipColor" inset size="sm">
-            <UIcon :name="device.icon" class="text-xl text-cyan-200" />
+            <UIcon :name="device.icon" class="text-xl text-[#f4b88a]" />
           </UChip>
           <span class="font-semibold truncate">{{ device.label }} · Live Feed</span>
         </div>
