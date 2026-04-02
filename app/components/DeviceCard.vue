@@ -15,6 +15,58 @@ const props = defineProps({
 
 const emit = defineEmits(['start', 'stop', 'refresh'])
 
+// ── QFlow runtime config (only relevant when device.id === 'pc') ──────────────
+
+const VIDEO_OPTIONS = [
+  { label: '1-Way  (traffic.mp4)', value: 'traffic.mp4' },
+  { label: '2-Way  (traffic_bi.mp4)', value: 'traffic_bi.mp4' },
+]
+
+const VALID_GRID_PRESETS = [
+  { label: '2 × 1  (2)', rows: 2, cols: 1 },
+  { label: '2 × 2  (4)', rows: 2, cols: 2 },
+  { label: '2 × 4  (8)', rows: 2, cols: 4 },
+  { label: '4 × 4  (16)', rows: 4, cols: 4 },
+  { label: '4 × 8  (32)', rows: 4, cols: 8 },
+  { label: '8 × 8  (64)', rows: 8, cols: 8 },
+]
+
+const qflowConfig = reactive({
+  videoSource: 'traffic_bi.mp4',
+  rows: 4,
+  cols: 8,
+})
+
+const isQFlow = computed(() => props.device.id === 'pc')
+
+function isPowerOfTwo(n) {
+  return n > 0 && (n & (n - 1)) === 0
+}
+
+const gridValid = computed(() => isPowerOfTwo(qflowConfig.rows * qflowConfig.cols))
+
+const gridWarning = computed(() => {
+  if (gridValid.value) return null
+  return `${qflowConfig.rows} × ${qflowConfig.cols} = ${qflowConfig.rows * qflowConfig.cols} — must be a power of 2`
+})
+
+function applyGridPreset(preset) {
+  qflowConfig.rows = preset.rows
+  qflowConfig.cols = preset.cols
+}
+
+function handleActivate() {
+  if (isQFlow.value) {
+    emit('start', {
+      video_source: qflowConfig.videoSource,
+      rows: qflowConfig.rows,
+      cols: qflowConfig.cols,
+    })
+  } else {
+    emit('start')
+  }
+}
+
 // ── derived display values ────────────────────────────────────────────────────
 
 const onlineBadgeColor = computed(() => {
@@ -149,6 +201,7 @@ onUnmounted(() => {
         <!-- Live feed -->
         <template v-else-if="showVideo">
           <img
+            :key="`feed-${device.running}`"
             :src="videoSrc"
             alt="Video feed"
             class="w-full h-full object-cover"
@@ -181,6 +234,75 @@ onUnmounted(() => {
 
       </div>
 
+      <!-- QFlow runtime config panel -->
+      <template v-if="isQFlow">
+        <div class="rounded-lg border border-stone-800 bg-stone-950/60 p-3 space-y-3">
+          <p class="text-xs font-semibold uppercase tracking-wider quantum-section-label">QFlow Config</p>
+
+          <!-- Video source -->
+          <div class="space-y-1">
+            <label class="text-xs text-stone-400">Video Source</label>
+            <div class="flex gap-2">
+              <UButton
+                v-for="opt in VIDEO_OPTIONS"
+                :key="opt.value"
+                size="xs"
+                :variant="qflowConfig.videoSource === opt.value ? 'solid' : 'outline'"
+                color="primary"
+                class="flex-1 justify-center"
+                @click="qflowConfig.videoSource = opt.value"
+              >
+                {{ opt.label }}
+              </UButton>
+            </div>
+          </div>
+
+          <!-- Grid dimensions -->
+          <div class="space-y-1">
+            <label class="text-xs text-stone-400">Grid (rows × cols)</label>
+            <div class="flex items-center gap-2">
+              <UInput
+                v-model.number="qflowConfig.rows"
+                type="number"
+                min="1"
+                max="16"
+                size="sm"
+                class="w-20"
+                :ui="{ base: 'text-center' }"
+              />
+              <span class="text-stone-500 text-sm">×</span>
+              <UInput
+                v-model.number="qflowConfig.cols"
+                type="number"
+                min="1"
+                max="16"
+                size="sm"
+                class="w-20"
+                :ui="{ base: 'text-center' }"
+              />
+              <span class="text-xs text-stone-500 ml-1">= {{ qflowConfig.rows * qflowConfig.cols }}</span>
+            </div>
+            <!-- Preset quick-select -->
+            <div class="flex flex-wrap gap-1 mt-1">
+              <UButton
+                v-for="p in VALID_GRID_PRESETS"
+                :key="p.label"
+                size="xs"
+                variant="ghost"
+                color="neutral"
+                class="px-2 py-0.5 text-[10px]"
+                @click="applyGridPreset(p)"
+              >
+                {{ p.rows }}×{{ p.cols }}
+              </UButton>
+            </div>
+            <p v-if="gridWarning" class="text-xs text-amber-400 mt-1">
+              {{ gridWarning }}
+            </p>
+          </div>
+        </div>
+      </template>
+
       <!-- Action buttons -->
       <div class="flex items-center gap-2 flex-wrap">
         <UTooltip
@@ -192,9 +314,9 @@ onUnmounted(() => {
             variant="solid"
             icon="heroicons:play"
             :loading="device.loading"
-            :disabled="device.loading || device.running === true"
+            :disabled="device.loading || device.running === true || (isQFlow && !gridValid)"
             class="flex-1"
-            @click="emit('start')"
+            @click="handleActivate"
           >
             Activate
           </UButton>
@@ -281,6 +403,7 @@ onUnmounted(() => {
           class="h-full w-full rounded-lg overflow-hidden bg-black border quantum-video flex items-center justify-center"
         >
           <img
+            :key="`feed-expanded-${device.running}`"
             :src="videoSrc"
             :alt="`${device.label} video feed`"
             class="w-full h-full object-contain"

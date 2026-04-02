@@ -20,8 +20,8 @@ const deviceRefs = {
   pi,
 }
 
-function handleStart(deviceId) {
-  return startDevice(deviceRefs[deviceId])
+function handleStart(deviceId, params = {}) {
+  return startDevice(deviceRefs[deviceId], params)
 }
 
 function handleStop(deviceId) {
@@ -224,7 +224,7 @@ const piOnlineColor = computed(() => {
             <DeviceCard
               :device="pc"
               :video-url="pcVideoUrl"
-              @start="handleStart('pc')"
+              @start="(params) => handleStart('pc', params)"
               @stop="handleStop('pc')"
               @refresh="handleRefresh('pc')"
             />

@@ -4,10 +4,12 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
   const baseUrl = config.pcAgentUrl
+  const body = await readBody(event).catch(() => ({}))
 
   try {
     const data = await $fetch(`${baseUrl}/start`, {
       method: 'POST',
+      body: body || {},
       timeout: 8000,
     })
     return { success: true, data }

@@ -79,11 +79,14 @@ export function useDevices() {
 
   // ── start ────────────────────────────────────────────────────────────────────
 
-  async function startDevice(device) {
+  async function startDevice(device, params = {}) {
     device.value.loading = true
     device.value.error = null
     try {
-      const res = await $fetch(`/api/devices/${device.value.id}/start`, { method: 'POST' })
+      const res = await $fetch(`/api/devices/${device.value.id}/start`, {
+        method: 'POST',
+        body: Object.keys(params).length ? params : undefined,
+      })
       if (res.success) {
         appendLog(logs, `${device.value.label} started successfully`, 'success')
         toast.add({ title: `${device.value.label} started`, color: 'success' })
