@@ -18,18 +18,28 @@ const emit = defineEmits(['start', 'stop', 'refresh'])
 // ── QFlow runtime config (only relevant when device.id === 'pc') ──────────────
 
 const VIDEO_OPTIONS = [
-  { label: '1-Way', value: 'traffic.mp4', directionSplit: null },
-  { label: '2-Way', value: 'traffic_bi.mp4', directionSplit: 'vertical' },
+  { label: '1-Way', value: 'traffic.mp4', icon: 'heroicons:arrow-right', directionSplit: null },
+  { label: '2-Way', value: 'traffic_bi.mp4', icon: 'heroicons:arrows-right-left', directionSplit: 'vertical' },
 ]
 
 const VALID_GRID_PRESETS = [
-  { label: '2 × 1  (2)', rows: 2, cols: 1 },
-  { label: '2 × 2  (4)', rows: 2, cols: 2 },
-  { label: '2 × 4  (8)', rows: 2, cols: 4 },
-  { label: '4 × 4  (16)', rows: 4, cols: 4 },
-  { label: '4 × 8  (32)', rows: 4, cols: 8 },
-  { label: '8 × 8  (64)', rows: 8, cols: 8 },
+  { label: '2 × 1  (2)', value: '2x1', rows: 2, cols: 1 },
+  { label: '2 × 2  (4)', value: '2x2', rows: 2, cols: 2 },
+  { label: '2 × 4  (8)', value: '2x4', rows: 2, cols: 4 },
+  { label: '4 × 4  (16)', value: '4x4', rows: 4, cols: 4 },
+  { label: '4 × 8  (32)', value: '4x8', rows: 4, cols: 8 },
+  { label: '8 × 8  (64)', value: '8x8', rows: 8, cols: 8 },
 ]
+
+const presetValue = ref(null)
+
+function onPresetSelect(val) {
+  const preset = VALID_GRID_PRESETS.find(p => p.value === val)
+  if (preset) {
+    applyGridPreset(preset)
+    nextTick(() => { presetValue.value = null })
+  }
+}
 
 const qflowConfig = reactive({
   videoSource: 'traffic_bi.mp4',
@@ -242,26 +252,31 @@ onUnmounted(() => {
           <p class="text-xs font-semibold uppercase tracking-wider quantum-section-label">QFlow Config</p>
 
           <!-- Video source -->
-          <div class="space-y-1">
-            <label class="text-xs text-stone-400">Video Source</label>
-            <div class="flex gap-2">
-              <UButton
-                v-for="opt in VIDEO_OPTIONS"
-                :key="opt.value"
-                size="xs"
-                :variant="qflowConfig.videoSource === opt.value ? 'solid' : 'outline'"
-                color="primary"
-                class="flex-1 justify-center"
-                @click="qflowConfig.videoSource = opt.value"
-              >
-                {{ opt.label }}
-              </UButton>
-            </div>
+          <div class="space-y-1.5">
+            <label class="text-xs text-stone-400 font-medium">Video Source</label>
+            <UTabs
+              v-model="qflowConfig.videoSource"
+              :items="VIDEO_OPTIONS"
+              size="sm"
+              color="primary"
+            />
           </div>
 
+          <USeparator />
+
           <!-- Grid dimensions -->
-          <div class="space-y-1">
-            <label class="text-xs text-stone-400">Grid (rows × cols)</label>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs text-stone-400 font-medium">Grid Dimensions</label>
+              <UBadge
+                :color="gridValid ? 'success' : 'warning'"
+                variant="subtle"
+                size="xs"
+              >
+                {{ qflowConfig.rows * qflowConfig.cols }} cells
+              </UBadge>
+            </div>
+
             <div class="flex items-center gap-2">
               <UInput
                 v-model.number="qflowConfig.rows"
@@ -269,7 +284,7 @@ onUnmounted(() => {
                 min="1"
                 max="16"
                 size="sm"
-                class="w-20"
+                class="w-16"
                 :ui="{ base: 'text-center' }"
               />
               <span class="text-stone-500 text-sm">×</span>
@@ -279,28 +294,33 @@ onUnmounted(() => {
                 min="1"
                 max="16"
                 size="sm"
-                class="w-20"
+                class="w-16"
                 :ui="{ base: 'text-center' }"
               />
-              <span class="text-xs text-stone-500 ml-1">= {{ qflowConfig.rows * qflowConfig.cols }}</span>
+              <USelect
+                v-model="presetValue"
+                :items="VALID_GRID_PRESETS"
+                placeholder="Quick preset…"
+                size="sm"
+                class="flex-1"
+                @update:model-value="onPresetSelect"
+              />
             </div>
-            <!-- Preset quick-select -->
-            <div class="flex flex-wrap gap-1 mt-1">
-              <UButton
-                v-for="p in VALID_GRID_PRESETS"
-                :key="p.label"
-                size="xs"
-                variant="ghost"
-                color="neutral"
-                class="px-2 py-0.5 text-[10px]"
-                @click="applyGridPreset(p)"
-              >
-                {{ p.rows }}×{{ p.cols }}
-              </UButton>
-            </div>
-            <p v-if="gridWarning" class="text-xs text-amber-400 mt-1">
-              {{ gridWarning }}
-            </p>
+
+            <UAlert
+              v-if="gridWarning"
+              color="warning"
+              variant="soft"
+              icon="heroicons:exclamation-triangle"
+              :description="gridWarning"
+            />
+
+            <UAlert
+              color="neutral"
+              variant="soft"
+              icon="heroicons:cpu-chip"
+              description="Larger grids increase quantum circuit depth and may reduce stream performance."
+            />
           </div>
         </div>
       </template>
