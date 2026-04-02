@@ -18,8 +18,8 @@ const emit = defineEmits(['start', 'stop', 'refresh'])
 // ── QFlow runtime config (only relevant when device.id === 'pc') ──────────────
 
 const VIDEO_OPTIONS = [
-  { label: '1-Way  (traffic.mp4)', value: 'traffic.mp4' },
-  { label: '2-Way  (traffic_bi.mp4)', value: 'traffic_bi.mp4' },
+  { label: '1-Way', value: 'traffic.mp4', directionSplit: null },
+  { label: '2-Way', value: 'traffic_bi.mp4', directionSplit: 'vertical' },
 ]
 
 const VALID_GRID_PRESETS = [
@@ -57,10 +57,12 @@ function applyGridPreset(preset) {
 
 function handleActivate() {
   if (isQFlow.value) {
+    const selectedOption = VIDEO_OPTIONS.find(o => o.value === qflowConfig.videoSource)
     emit('start', {
       video_source: qflowConfig.videoSource,
       rows: qflowConfig.rows,
       cols: qflowConfig.cols,
+      direction_split: selectedOption?.directionSplit ?? null,
     })
   } else {
     emit('start')
