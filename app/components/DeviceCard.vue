@@ -17,6 +17,16 @@ const emit = defineEmits(['start', 'stop', 'refresh'])
 
 // ── QFlow runtime config (only relevant when device.id === 'pc') ──────────────
 
+const QBITS_OPTIONS = [
+  { label: '2 qbits (fast)', value: 2 },
+  { label: '3 qbits', value: 3 },
+  { label: '4 qbits', value: 4 },
+  { label: '5 qbits', value: 5 },
+  { label: '6 qbits (default)', value: 6 },
+  { label: '7 qbits', value: 7 },
+  { label: '8 qbits (slow)', value: 8 },
+]
+
 const VIDEO_OPTIONS = [
   { label: '1-Way', value: 'traffic.mp4', icon: 'heroicons:arrow-right', directionSplit: null },
   { label: '2-Way', value: 'traffic_bi.mp4', icon: 'heroicons:arrows-right-left', directionSplit: 'vertical' },
@@ -45,6 +55,7 @@ const qflowConfig = reactive({
   videoSource: 'traffic_bi.mp4',
   rows: 4,
   cols: 8,
+  precisionQbits: 6,
 })
 
 const isQFlow = computed(() => props.device.id === 'pc')
@@ -73,6 +84,7 @@ function handleActivate() {
       rows: qflowConfig.rows,
       cols: qflowConfig.cols,
       direction_split: selectedOption?.directionSplit ?? null,
+      precision_qubits: qflowConfig.precisionQbits,
     })
   } else {
     emit('start')
@@ -264,17 +276,22 @@ onUnmounted(() => {
 
           <USeparator />
 
-          <!-- Grid dimensions -->
+          <!-- Grid dimensions & precision qubits -->
           <div class="space-y-2">
             <div class="flex items-center justify-between">
-              <label class="text-xs text-stone-400 font-medium">Grid Dimensions</label>
-              <UBadge
-                :color="gridValid ? 'success' : 'warning'"
-                variant="subtle"
-                size="xs"
-              >
-                {{ qflowConfig.rows * qflowConfig.cols }} cells
-              </UBadge>
+              <label class="text-xs text-stone-400 font-medium">Grid & Precision</label>
+              <div class="flex items-center gap-1.5">
+                <UBadge
+                  :color="gridValid ? 'success' : 'warning'"
+                  variant="subtle"
+                  size="xs"
+                >
+                  {{ qflowConfig.rows * qflowConfig.cols }} cells
+                </UBadge>
+                <UBadge color="info" variant="subtle" size="xs">
+                  {{ qflowConfig.precisionQbits }} qbits
+                </UBadge>
+              </div>
             </div>
 
             <div class="flex items-center gap-2">
@@ -305,6 +322,12 @@ onUnmounted(() => {
                 class="flex-1"
                 @update:model-value="onPresetSelect"
               />
+              <USelect
+                v-model="qflowConfig.precisionQbits"
+                :items="QBITS_OPTIONS"
+                size="sm"
+                class="flex-1"
+              />
             </div>
 
             <UAlert
@@ -319,7 +342,7 @@ onUnmounted(() => {
               color="neutral"
               variant="soft"
               icon="heroicons:cpu-chip"
-              description="Larger grids increase quantum circuit depth and may reduce stream performance."
+              description="Larger grids and more precision qbits increase circuit depth and may reduce stream performance."
             />
           </div>
         </div>
