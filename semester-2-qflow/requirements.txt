@@ -1,0 +1,9 @@
+qiskit>=2.0
+qiskit-aer>=0.17
+opencv-python>=4.8
+ultralytics>=8.0
+numpy>=1.24
+requests>=2.28
+python-dotenv>=1.0
+flask>=3.0
+flask-cors>=4.0
