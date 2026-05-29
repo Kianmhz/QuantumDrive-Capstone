@@ -31,7 +31,7 @@ This is a monorepo of three subprojects developed across two semesters:
 | [`semester-2-qflow/`](semester-2-qflow) | **QFlow — Quantum Traffic Density Estimation** using Quantum Phase Estimation + Grover counting on YOLO occupancy grids. | Python · Qiskit · YOLOv8 · Flask |
 | [`semester-2-dashboard/`](semester-2-dashboard) | **QDrive Dashboard** — remote control panel for two device agents (Home PC + Raspberry Pi) with live MJPEG previews. | Nuxt 4 · Nuxt UI v4 · Nitro |
 
-Each subproject has its own `README.md` with detailed setup, CLI reference, and architecture notes.
+Each subproject has its own `README.md` with detailed setup, CLI reference, and architecture notes. For the cross-cutting story — runtime flows, engineering decisions, and a cold-read order — see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ---
 

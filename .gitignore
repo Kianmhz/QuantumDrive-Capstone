@@ -1,0 +1,10 @@
+# OS-level noise that doesn't belong to any single subproject.
+.DS_Store
+Thumbs.db
+
+# Editor / IDE noise.
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
