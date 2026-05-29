@@ -1,4 +1,4 @@
-# src/quantum/grover_ped_demo_all.py
+# src/quantum/grover_ped_demo.py
 import json
 import math
 from pathlib import Path

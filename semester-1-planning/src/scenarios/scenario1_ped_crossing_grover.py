@@ -1,4 +1,4 @@
-# src/scenarios/scenario1_ped_crossing.py
+# src/scenarios/scenario1_ped_crossing_grover.py
 import time, random
 import carla
 
@@ -24,7 +24,7 @@ from src.quantum.grover_ped_demo import (
 # ------- Scenario Parameters -------
 TOWN = "Town03"          # urban map
 EGO_SPEED_MS = 9         # ≈ 32 km/h realistic city driving
-CROSS_DELAY_S = 4      # pedestrian starts crossing after 2 seconds
+CROSS_DELAY_S = 4      # pedestrian starts crossing after 4 seconds
 PED_SPEED_MS = 2.5       # ≈ 9 km/h brisk walking
 AHEAD_M = 43.0           # keep this (avoids object collision)
 LATERAL_M = 8.0          # pedestrian crossing offset
