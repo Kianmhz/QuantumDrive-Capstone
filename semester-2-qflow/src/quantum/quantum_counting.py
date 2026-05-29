@@ -224,7 +224,9 @@ def quantum_counting(
     # Complexity values (always computed)
     classical_queries = N
     quantum_queries = math.sqrt(N)
-    actual_oracle_calls = (2 ** (precision_qubits-1)) - 1
+    # QPE applies controlled-G^(2^k) for k=0..p-1, so total oracle calls
+    # = sum(2^k for k in 0..p-1) = 2^p - 1.
+    actual_oracle_calls = (2 ** precision_qubits) - 1
     theoretical_speedup = classical_queries / actual_oracle_calls if actual_oracle_calls > 0 else 0
     
     # Find marked indices (in practice, oracle would be a black box)
