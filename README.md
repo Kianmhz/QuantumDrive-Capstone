@@ -15,9 +15,9 @@ Capstone project exploring **hybrid classical–quantum algorithms for autonomou
 
 End-to-end walkthrough of the **QDrive dashboard** controlling the **QFlow quantum traffic density** pipeline on a remote device:
 
-https://github.com/Kianmhz/QuantumDrive-Capstone/raw/main/assets/demo.mp4
+https://github.com/user-attachments/assets/1277dc86-f55b-48b7-89c4-b99ab964d967
 
-> If the inline player doesn't load, [download the demo here](assets/demo.mp4).
+> Prefer a download? [Grab the file here](assets/demo.mp4).
 
 ---
 
