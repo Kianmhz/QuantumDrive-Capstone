@@ -104,6 +104,32 @@ The quantum module is executed **online per planning tick**, using a simulator b
 
 ---
 
+## Scenarios
+
+Two CARLA scenarios exercise the planner, each with a classical and a quantum variant:
+
+### Scenario 1 — Pedestrian crossing (`scenarios/scenario1_ped_crossing*.py`)
+
+The ego approaches a crossing point on Town03 while a pedestrian steps into its
+path after a fixed delay. The planner rolls out the candidate acceleration
+profiles described above and selects an action every 5 Hz. The classical variant
+brute-forces the cost function; the Grover variant (`*_grover.py`) searches the
+same four-action set on a simulated quantum backend. This is the scenario the
+cost function and Grover sections above describe.
+
+### Scenario 2 — Highway vehicle cut-in (`scenarios/scenario2_*.py`)
+
+On Town04, a scripted NPC performs an aggressive lane-change cut-in in front of
+the ego at highway speed (ego ≈ 18 m/s, NPC ≈ 24 m/s). After a 0.15 s reaction
+delay, the ego picks an evasive action each tick:
+
+- **Classical** (`scenario2_vehicle_cutin.py`): rule-based decision over
+  `keep`, `gentle_brake`, and `hard_brake`, driven by time-to-collision and
+  relative-position thresholds.
+- **Quantum** (`scenario2_quantum.py`): the action set adds an `evasive_left`
+  maneuver; each action is scored by a cost heuristic and the lowest-cost one
+  is amplified with Grover search on a simulated backend.
+
 ## Results
 
 ### Decision Consistency
@@ -147,7 +173,7 @@ Planned extensions include:
 - **Simulation:** CARLA  
 - **Quantum SDK:** Qiskit  
 - **Source Code:** Python  
-- **Decision Frequency:** 20 Hz  
+- **Decision Frequency:** 5 Hz planning loop on a 100 Hz physics step (pedestrian scenario)  
 
 ---
 
