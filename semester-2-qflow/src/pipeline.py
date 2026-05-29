@@ -36,10 +36,10 @@ except ImportError as e:
 
 def process_video_with_quantum(
     video_path: str,
-    rows: int = 4,
-    cols: int = 4,
+    rows: int = 8,
+    cols: int = 8,
     precision_qubits: int = 6,
-    shots: int = 1024,
+    shots: int = 512,
     confidence_threshold: float = 0.5,
     use_quantum: bool = True,
     device: str = "cuda",
@@ -348,7 +348,7 @@ def process_video_with_quantum(
             # Show preview
             cv2.imshow("Quantum Traffic Density", vis_frame)
             
-            # Cap frame rate to 30 FPS for smooth playback
+            # Cap frame rate to target_fps for smooth playback
             wait_time = max(1, int((frame_duration - elapsed) * 1000))
             key = cv2.waitKey(wait_time) & 0xFF
 

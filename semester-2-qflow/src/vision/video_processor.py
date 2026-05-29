@@ -78,11 +78,7 @@ class VideoProcessor:
         
         # Use half precision (FP16) on GPU for faster inference
         self.use_half = device == "cuda"
-        if self.use_half:
-            self.model.to(device)
-            print(f"  Using GPU with FP16 for faster inference")
-        else:
-            self.model.to(device)
+        self.model.to(device)
     
     def detect_vehicles(self, frame) -> List[Detection]:
         """

@@ -9,6 +9,7 @@ hardcoded in source:
     GRAFANA_TOKEN – Grafana API token with MetricsPublisher role
 """
 
+import logging
 import os
 import time
 import requests
@@ -16,14 +17,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+log = logging.getLogger(__name__)
+
 def push_metrics_to_grafana(row: dict) -> int | None:
     url = os.environ.get("GRAFANA_URL")
     user = os.environ.get("GRAFANA_USER")
     token = os.environ.get("GRAFANA_TOKEN")
 
     if not all([url, user, token]):
-        print(
-            "Warning: GRAFANA_URL / GRAFANA_USER / GRAFANA_TOKEN env vars not set "
+        log.warning(
+            "GRAFANA_URL / GRAFANA_USER / GRAFANA_TOKEN env vars not set "
             "– Grafana push skipped."
         )
         return None
@@ -82,5 +85,5 @@ def push_metrics_to_grafana(row: dict) -> int | None:
         )
         return response.status_code
     except requests.RequestException as exc:
-        print(f"Warning: Grafana push failed – {exc}")
+        log.warning("Grafana push failed – %s", exc)
         return None

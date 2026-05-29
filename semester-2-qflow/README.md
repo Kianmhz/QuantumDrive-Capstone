@@ -174,7 +174,7 @@ Grid size (rows x cols) must be a power of 2 (e.g., 16, 32, 64). Search qubits a
 |------|---------|-------------|
 | `--no-quantum` | false | Disable quantum counting (classical only, faster) |
 | `--precision N` | 6 | QPE precision qubits (more = accurate but slower) |
-| `--shots N` | 1024 | Quantum measurement shots |
+| `--shots N` | 512 | Quantum measurement shots |
 | `--quantum-every N` | 5 | Run quantum every N frames (synced with classical) |
 
 #### Direction Options
@@ -433,6 +433,8 @@ When processing video, the pipeline writes to the `logs/` directory:
   | `classical_queries_O_N` | Classical oracle queries (= N) |
   | `quantum_queries_O_sqrtN` | Quantum oracle queries (= sqrt(N)) |
   | `theoretical_speedup` | N / sqrt(N) = sqrt(N) |
+  | `actual_oracle_calls` | Oracle calls actually applied: 2^precision_qubits - 1 |
+  | `actual_query_speedup` | classical_queries / actual_oracle_calls |
 
   > Classical and quantum values in each row are always computed from the same frame snapshot, ensuring a fair comparison.
 
