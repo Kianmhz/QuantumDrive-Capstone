@@ -23,7 +23,7 @@ Browser → Nuxt Dashboard (this app) → Device Agent (PC or Pi)
 ## Project Structure
 
 ```
-Capstone-Dashboard/
+semester-2-dashboard/
 ├── .env.example                      ← Template for local agent base URLs
 ├── .env                              ← Local env overrides (ignored by git)
 ├── nuxt.config.ts                    ← Nuxt UI module + runtimeConfig
@@ -34,7 +34,8 @@ Capstone-Dashboard/
 │   │   └── useDevices.js             ← Device state, actions, polling, logs
 │   ├── components/
 │   │   ├── DeviceCard.vue            ← Per-device control card
-│   │   └── LogsPanel.vue             ← Timestamped event log panel
+│   │   ├── LogsPanel.vue             ← Timestamped event log panel
+│   │   └── QuantumOrb.vue            ← Animated Bloch-sphere sidebar accent
 │   ├── pages/
 │   │   └── index.vue                 ← Main dashboard page
 │   └── types/
@@ -47,6 +48,10 @@ Capstone-Dashboard/
     ├── pi/start.post.js              ← POST /api/devices/pi/start
     └── pi/stop.post.js               ← POST /api/devices/pi/stop
 ```
+
+> The two devices are addressed by the IDs `pc` and `pi` throughout the code
+> and API routes; the UI presents them under the labels **QFlow** (PC) and
+> **QFocus** (Pi).
 
 ## Device Agent API Contract
 

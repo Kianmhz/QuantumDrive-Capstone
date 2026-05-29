@@ -1,7 +1,7 @@
 // composables/useDevices.js
 // Central state and actions for both device agents
 
-/** @returns {import('vue').Ref<import('../app/types/index').LogEntry[]>} */
+/** @returns {import('vue').Ref<import('../types/index').LogEntry[]>} */
 export const useDeviceLogs = () => useState('device-logs', () => [])
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
