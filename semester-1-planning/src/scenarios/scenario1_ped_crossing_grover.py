@@ -8,18 +8,15 @@ from src.planning.prediction import ped_predictor, is_ped_relevant
 from src.common.geometry import fwd_vec, right_vec, move_behind, transform_on_other_side
 from src.common.world import build_lane_polyline, follow_spectator
 from src.common.control import accel_to_controls
+from src.common.sim import set_sync
 
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
 
 from src.planning.candidates import make_accel_profiles
 from src.planning.evaluator import eval_candidate
-from src.quantum.grover_ped_demo import (
-    grover_oracle_from_costs,
-    grover_diffusion,
-    ACTION_TO_BIT,
-    BIT_TO_ACTION,
-)
+from src.quantum.grover import grover_oracle_from_costs, grover_diffusion
+from src.quantum.grover_ped_demo import ACTION_TO_BIT, BIT_TO_ACTION
 
 # ------- Scenario Parameters -------
 TOWN = "Town03"          # urban map
@@ -34,13 +31,6 @@ PLANNING_DT = 0.20       # plan at 5 Hz
 PLAN_EVERY = max(1, int(PLANNING_DT / SIM_DT))
 SMOOTH_ALPHA = 0.4       # smooth control transitions
 # -----------------------------------
-
-def set_sync(world, enabled=True, dt=SIM_DT):
-    s = world.get_settings()
-    s.synchronous_mode = enabled
-    s.fixed_delta_seconds = dt if enabled else None
-    s.substepping = False
-    world.apply_settings(s)
 
 def choose_straight_spawn(world):
     spawns = world.get_map().get_spawn_points()
@@ -143,7 +133,7 @@ def main():
                         # --- Run Grover search ---
                         qc = QuantumCircuit(2, 2)
                         qc.h([0, 1])
-                        oracle = grover_oracle_from_costs(per_action)
+                        oracle = grover_oracle_from_costs(per_action, ACTION_TO_BIT)
                         diffusion = grover_diffusion(2)
                         qc.compose(oracle, [0, 1], inplace=True)
                         qc.compose(diffusion, [0, 1], inplace=True)

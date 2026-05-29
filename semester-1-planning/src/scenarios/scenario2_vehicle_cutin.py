@@ -2,6 +2,10 @@ import time, math, carla
 import json
 from pathlib import Path
 
+from src.common.geometry import fwd_vec as fwd, right_vec as right
+from src.common.world import follow_spectator
+from src.common.sim import set_sync
+
 # ------- Parameters -------
 TOWN = "Town04"
 EGO_SPEED_MS = 18.0
@@ -13,24 +17,6 @@ REACTION_TIME_S = 0.15
 # ---------------------------
 
 
-def set_sync(world, enabled=True, dt=SIM_DT):
-    s = world.get_settings()
-    s.synchronous_mode = enabled
-    s.fixed_delta_seconds = dt if enabled else None
-    s.substepping = False
-    world.apply_settings(s)
-
-
-def fwd(rot):
-    yaw = math.radians(rot.yaw)
-    return carla.Vector3D(math.cos(yaw), math.sin(yaw), 0)
-
-
-def right(rot):
-    yaw = math.radians(rot.yaw + 90)
-    return carla.Vector3D(math.cos(yaw), math.sin(yaw), 0)
-
-
 def choose_highway_spawn(world):
     spawns = world.get_map().get_spawn_points()
     if len(spawns) > 128:
@@ -40,15 +26,6 @@ def choose_highway_spawn(world):
             if abs(sp.location.y) < 5 and sp.location.x > 50:
                 return sp
         return spawns[0]
-
-
-def follow_spectator(world, target, dist=18, height=6):
-    spec = world.get_spectator()
-    tf = target.get_transform()
-    fv = fwd(tf.rotation)
-    loc = tf.location - fv * dist
-    loc.z += height
-    spec.set_transform(carla.Transform(loc, tf.rotation))
 
 
 def get_distance_between(vehicle1, vehicle2):
@@ -258,7 +235,7 @@ def main():
 
         for tick in range(ticks_total):
             world.tick()
-            follow_spectator(world, ego)
+            follow_spectator(world, ego, dist=18, height=6)
 
             v_ego, v_npc = ego.get_velocity(), npc.get_velocity()
             ego_speed = math.hypot(v_ego.x, v_ego.y)

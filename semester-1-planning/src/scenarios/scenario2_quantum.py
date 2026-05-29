@@ -9,6 +9,11 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
 
+from src.common.geometry import fwd_vec as fwd, right_vec as right
+from src.common.world import follow_spectator
+from src.common.sim import set_sync
+from src.quantum.grover import grover_oracle_from_costs, grover_diffusion
+
 # --- Constants --------------------------------------------------------------
 SNAP_DIR = Path("snapshots")
 SNAP_PATTERN = re.compile(r"cutin_quantum_t([0-9.]+)\.json")
@@ -32,24 +37,6 @@ REACTION_TIME_S = 0.15
 
 
 # --- Helper Functions (from classical version) -------------------------------
-def set_sync(world, enabled=True, dt=SIM_DT):
-    s = world.get_settings()
-    s.synchronous_mode = enabled
-    s.fixed_delta_seconds = dt if enabled else None
-    s.substepping = False
-    world.apply_settings(s)
-
-
-def fwd(rot):
-    yaw = math.radians(rot.yaw)
-    return carla.Vector3D(math.cos(yaw), math.sin(yaw), 0)
-
-
-def right(rot):
-    yaw = math.radians(rot.yaw + 90)
-    return carla.Vector3D(math.cos(yaw), math.sin(yaw), 0)
-
-
 def choose_highway_spawn(world):
     spawns = world.get_map().get_spawn_points()
     if len(spawns) > 128:
@@ -59,15 +46,6 @@ def choose_highway_spawn(world):
             if abs(sp.location.y) < 5 and sp.location.x > 50:
                 return sp
         return spawns[0]
-
-
-def follow_spectator(world, target, dist=18, height=6):
-    spec = world.get_spectator()
-    tf = target.get_transform()
-    fv = fwd(tf.rotation)
-    loc = tf.location - fv * dist
-    loc.z += height
-    spec.set_transform(carla.Transform(loc, tf.rotation))
 
 
 def get_distance_between(vehicle1, vehicle2):
@@ -225,39 +203,6 @@ def evaluate_action_cost(
     return base_cost
 
 
-def grover_oracle_from_costs(costs: dict[str, float]) -> QuantumCircuit:
-    """Create a Grover oracle that marks the state with the lowest cost"""
-    qc = QuantumCircuit(2)
-    # Find strictly best action (lowest cost)
-    best_action = min(costs, key=costs.get)
-    # Find its bitstring
-    best_bits = ACTION_TO_BIT[best_action]
-
-    # Mark that single state
-    for q, b in enumerate(best_bits[::-1]):  # q0, q1
-        if b == "0":
-            qc.x(q)
-    qc.cz(0, 1)
-    for q, b in enumerate(best_bits[::-1]):
-        if b == "0":
-            qc.x(q)
-
-    return qc
-
-
-def grover_diffusion(n_qubits=2) -> QuantumCircuit:
-    """Create the Grover diffusion operator"""
-    qc = QuantumCircuit(n_qubits)
-    qc.h(range(n_qubits))
-    qc.x(range(n_qubits))
-    qc.h(n_qubits - 1)
-    qc.mcx(list(range(n_qubits - 1)), n_qubits - 1)
-    qc.h(n_qubits - 1)
-    qc.x(range(n_qubits))
-    qc.h(range(n_qubits))
-    return qc
-
-
 def quantum_decision(ego, npc, distance, longitudinal, lateral, ego_speed, npc_speed):
     """Make a decision using Grover's algorithm"""
     # Evaluate costs for each action
@@ -272,7 +217,7 @@ def quantum_decision(ego, npc, distance, longitudinal, lateral, ego_speed, npc_s
     qc.h([0, 1])  # Initialize in superposition
 
     # Apply Grover's algorithm
-    oracle = grover_oracle_from_costs(costs)
+    oracle = grover_oracle_from_costs(costs, ACTION_TO_BIT)
     diffusion = grover_diffusion(2)
     qc.compose(oracle, [0, 1], inplace=True)
     qc.compose(diffusion, [0, 1], inplace=True)
@@ -372,7 +317,7 @@ def main():
 
         for tick in range(ticks_total):
             world.tick()
-            follow_spectator(world, ego)
+            follow_spectator(world, ego, dist=18, height=6)
 
             v_ego, v_npc = ego.get_velocity(), npc.get_velocity()
             ego_speed = math.hypot(v_ego.x, v_ego.y)

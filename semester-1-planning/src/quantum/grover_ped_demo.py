@@ -11,6 +11,7 @@ from qiskit_aer import Aer
 from src.planning.config import PlanConfig
 from src.planning.candidates import make_accel_profiles
 from src.planning.evaluator import eval_candidate
+from src.quantum.grover import grover_oracle_from_costs, grover_diffusion
 
 # --- constants --------------------------------------------------------------
 SNAP_DIR = Path("snapshots")
@@ -39,37 +40,6 @@ def fake_lane_from_snapshot(ego_loc, ego_vel, N_pts=400, ds=1.0):
     pts = [P(ego_loc[0] + ux * i * ds, ego_loc[1] + uy * i * ds, ego_loc[2])
            for i in range(N_pts)]
     return pts, v0
-
-
-def grover_oracle_from_costs(costs: dict[str, float]) -> QuantumCircuit:
-    qc = QuantumCircuit(2)
-    # find strictly best action
-    best_action = min(costs, key=costs.get)
-    # find its bitstring
-    best_bits = ACTION_TO_BIT[best_action]
-
-    # mark that single state
-    for q, b in enumerate(best_bits[::-1]):  # q0, q1
-        if b == "0":
-            qc.x(q)
-    qc.cz(0, 1)
-    for q, b in enumerate(best_bits[::-1]):
-        if b == "0":
-            qc.x(q)
-
-    return qc
-
-
-def grover_diffusion(n_qubits=2) -> QuantumCircuit:
-    qc = QuantumCircuit(n_qubits)
-    qc.h(range(n_qubits))
-    qc.x(range(n_qubits))
-    qc.h(n_qubits - 1)
-    qc.mcx(list(range(n_qubits - 1)), n_qubits - 1)
-    qc.h(n_qubits - 1)
-    qc.x(range(n_qubits))
-    qc.h(range(n_qubits))
-    return qc
 
 
 # --- main loop --------------------------------------------------------------
@@ -128,7 +98,7 @@ def process_snapshot(path: Path):
     # --- Quantum run
     qc = QuantumCircuit(2, 2)
     qc.h([0, 1])
-    oracle = grover_oracle_from_costs(costs)
+    oracle = grover_oracle_from_costs(costs, ACTION_TO_BIT)
     diffusion = grover_diffusion(2)
     qc.compose(oracle, [0, 1], inplace=True)
     qc.compose(diffusion, [0, 1], inplace=True)
