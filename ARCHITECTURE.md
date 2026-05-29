@@ -216,7 +216,7 @@ When you (or a recruiter, or future-you) open this repo:
 | Question | Where to point |
 |---|---|
 | "How does the quantum part *actually* work?" | quantum_counting.py — Grover op has eigenvalues e^{±2iθ} with sin²θ = M/N; QPE measures θ, then M = N·sin²θ. |
-| "What's the quantum advantage here?" | Theoretical O(N) → O(√N) oracle queries; the constructed-oracle caveat in semester-2-qflow/README.md → "Important Assumptions". |
+| "What's the quantum advantage here?" | Theoretical O(N) → O(√N) oracle queries; the practical gap (2^p − 1 vs N) is tabulated in semester-2-qflow/README.md → "Oracle-Call Scaling" — 2.1× at N=64 widening to 8.1× at N=1024, with the constructed-oracle caveat in "Important Assumptions". |
 | "What happens when YOLO is faster than the quantum step?" | stream_runner.py — quantum runs once per N frames in its own executor; main loop checks the future non-blocking, so visualization stays at 20 fps. |
 | "Why JS for the dashboard but TS for the configs?" | Source code is Vue + Composition API in JS; configs (`nuxt.config.ts`, `app.config.ts`) are TS because Nuxt's type inference is strongest there. Pragmatic split, not religious. |
 | "How would this scale to 32+ candidates?" | semester-1-planning/README.md → "Scalability Discussion"; the encoding is `log2(N)` qubits and Grover's iteration count is roughly π/4·√(N/M). |

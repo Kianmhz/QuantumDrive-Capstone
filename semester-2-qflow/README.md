@@ -328,6 +328,28 @@ $$M = N \cdot \sin^2(\theta)$$
 | Classical Counting | N | O(N) |
 | Quantum Counting | O(sqrt(N)) | O(sqrt(N) log N) |
 
+### Oracle-Call Scaling
+
+The O(sqrt(N)) advantage is asymptotic. In practice QPE applies 2^p − 1
+controlled-Grover queries to resolve the phase, and at small N that
+constant overhead dominates. The tradeoff diminishes as N grows — the
+framework is built to surface that gap rather than claim it away.
+
+| Grid size N | Classical O(N) | Theoretical O(sqrt(N)) | Actual QPE (p, 2^p − 1) | Speedup vs classical |
+|---:|---:|---:|---:|---:|
+| 64   | 64   | 8  | p=5, 31  | 2.1x |
+| 128  | 128  | 11 | p=5, 31  | 4.1x |
+| 256  | 256  | 16 | p=6, 63  | 4.1x |
+| 1024 | 1024 | 32 | p=7, 127 | 8.1x |
+
+> The live per-frame pipeline was validated at N=64; running Quantum
+> Counting every Nth frame is already heavy on the Aer CPU simulator
+> at that grid size, so the larger-N rows are computed directly from
+> the QPE oracle-call formula 2^p − 1 (structural — the circuit makes
+> exactly that many controlled-Grover calls regardless of where it
+> runs). Validating those rows in the streaming pipeline would need
+> real quantum hardware.
+
 ## Important Assumptions
 
 > **Academic Honesty Note**: This project makes the following assumptions that should be clearly stated in any report or presentation.

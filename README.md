@@ -52,6 +52,7 @@ See [`semester-1-planning/README.md`](semester-1-planning/README.md) for the cos
 Divides a video frame into a grid of regions, uses YOLOv8 to mark occupied cells, and applies **Quantum Counting** (Grover operator + QPE) to estimate density.
 
 - Theoretical complexity: classical O(N) vs quantum O(√N) oracle queries
+- Oracle-call scaling: actual QPE cost is 2^p − 1, so the gap to classical widens with N (2.1× at N=64 → 8.1× at N=1024); see `semester-2-qflow/README.md` → "Oracle-Call Scaling"
 - Per-frame logging of classical vs quantum counts, circuit depth, transpile time, and estimated speedup
 - Optional Grafana Cloud push for live dashboards
 - Device-agent (`Flask`) exposes `/status`, `/start`, `/stop`, `/video_feed` for remote control
